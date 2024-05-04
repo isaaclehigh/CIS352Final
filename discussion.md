@@ -31,6 +31,69 @@ racket compiler.rkt -v test-programs/sum1.irv
 
 (Also pass in -m for Mac)
 
+** Answer 1 **
+
+The purpose of ir-virtual is to create an intermediate step between
+the racket syntax of ifarith, ifarith-tiny, and anf, and the compiled 
+syntax of x86. Ir-virtual labels each let statement in the anf code, 
+which are generated for each statement in ifarith-tiny so that operations 
+are executed one at a time. These labels indicate to the ir-virtual->x86 
+function that some movement or action has taken place. This is necessary 
+because operations jmp, jz, and call all reference other operations and might 
+not utilize all the labeled operations in a piece of code. This is 
+particulary important for if statements, where depending on the truth 
+value of the if, certain branches might not be reached. The reachability
+of labeled branches is determined used labels-used and reachable-labels in 
+ir-virtual->x86. Beyond labeling, ir-virtual also begins the process of 
+encoding operations to x86 with intermidiary names like mov-lit and mov-reg.
+Such operations make the execution path of the code more clear, but need to 
+be broken into additional x86 operations to actually execute.
+
+Pros: Easier to read than x86, labels operations for x86 conversion
+Cons: Only accepts anf formatting, doesn't take into account stack allocation
+
+Sample .irv programs:
+
+1.) 
+    ifarith-tiny: '(+ 1 2)
+
+    ir-virtual:
+
+    (((label lab111896) (mov-lit x111796 1))
+      ((label lab111897) (mov-lit x111797 2))
+      ((label lab111898) (mov-reg x111798 x111796))
+      (add x111798 x111797)
+      (return x111798))
+      
+2.) 
+    ifarith-tiny: '(if 0 1 2)
+    
+    ir-virtual:
+
+    (((label lab121711) (mov-lit x121607 0))
+      ((label lab121712) (mov-lit zero121717 0))
+      (cmp x121607 zero121717)
+      (jz lab121713)
+      (jmp lab121715)
+      ((label lab121713) (mov-lit x121608 1))
+      (return x121608)
+      ((label lab121715) (mov-lit x121609 2))
+      (return x121609))
+
+3.) 
+    ifarith-tiny: '(let ((x 1)) (+ x 1))
+        
+    ir-virtual:
+
+    (((label lab122217) (mov-lit x122123 1))
+      ((label lab122218) (mov-reg x x122123))
+      ((label lab122219) (mov-lit x122124 1))
+      ((label lab122220) (mov-reg x122125 x))
+      (add x122125 x122124)
+      (return x122125))
+
+** End Answer 1 **
+
 [ Question 2 ] 
 
 For this task, you will write three new .ifa programs. Your programs
