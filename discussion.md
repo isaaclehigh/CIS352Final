@@ -112,6 +112,300 @@ carefully the relevance of each of the intermediate representations.
 For this question, please add your `.ifa` programs either (a) here or
 (b) to the repo and write where they are in this file.
 
+** Answer 2 **
+
+1.) 
+    q2_1.ifa: (print (+ 1 2))
+    
+    - intended to print "3"
+
+    ifarith-tiny: '(print (+ 1 2))
+    
+    - no change since ifarith and ifarith-tiny 
+        don't differ on implementation of print
+    
+    anf: 
+        '(let ((x1254 1))
+        (let ((x1255 2)) (let ((x1256 (+ x1254 x1255))) (print x1256))))
+   
+    - converts each member of expression into a let statement so that 
+        they are executed one step at a time
+        
+    ir-virtual: 
+        '(((label lab1257) (mov-lit x1254 1))
+          ((label lab1258) (mov-lit x1255 2))
+          ((label lab1259) (mov-reg x1256 x1254))
+          (add x1256 x1255)
+          ((label lab1260) (print x1256))
+          (return 0))
+    
+   - labels movements so that x86 conversion knows which are reachable, 
+    breaks let statements of anf expression into simplified x86 operations 
+    to lead to an easier conversion
+    
+    x86:
+        section .data
+            int_format db "%ld",10,0
+
+
+            global _main
+            extern _printf
+        section .text
+
+
+        _start:    call _main
+            mov rax, 60
+            xor rdi, rdi
+            syscall
+
+
+        _main:    push rbp
+            mov rbp, rsp
+            sub rsp, 48
+            mov esi, 1
+            mov [rbp-24], esi
+            mov esi, 2
+            mov [rbp-16], esi
+            mov esi, [rbp-24]
+            mov [rbp-8], esi
+            mov edi, [rbp-16]
+            mov eax, [rbp-8]
+            add eax, edi
+            mov [rbp-8], eax
+            mov esi, [rbp-8]
+            lea rdi, [rel int_format]
+            mov eax, 0
+            call _printf
+            mov rax, 0
+            jmp finish_up
+        finish_up:    add rsp, 48
+            leave 
+            ret
+    
+    - final machine code to be placed in an .asm file to be run, breaks up 
+        simplified ir-virtual operations into their more granular operations, 
+        allocates necessary stack space according to the number of registers needed 
+        (hence the addition of "mov rbp, rsp", "sub rsp, 48", and "add rsp, 48"
+        
+    OUTPUT: 
+        (base) isaaclehigh@Isaacs-Air ~ % /Users/isaaclehigh/Documents/Documents/CIS\ 352/CIS352Final/test-programs/q2_1 ; exit;
+        3
+
+        Saving session...
+        ...copying shared history...
+        ...saving history...truncating history files...
+        ...completed.
+        
+        [Process completed]
+     
+2.) 
+    q2_2.ifa: (let* ((x (+ 3 4))) (print x))
+    
+    - intended to print "7"
+
+    ifarith-tiny: '(let ((x (+ 3 4))) (print x))
+    
+    - let* is re-encoded as a let to reduce number of forms 
+    
+    anf: 
+        '(let ((x1254 3))
+           (let ((x1255 4))
+             (let ((x1256 (+ x1254 x1255))) (let ((x x1256)) (print x)))))
+   
+    - converts each member of expression into a let statement so that 
+        they are executed one step at a time
+        
+    ir-virtual: 
+        '(((label lab1257) (mov-lit x1254 3))
+          ((label lab1258) (mov-lit x1255 4))
+          ((label lab1259) (mov-reg x1256 x1254))
+          (add x1256 x1255)
+          ((label lab1260) (mov-reg x x1256))
+          ((label lab1261) (print x))
+          (return 0))
+    
+   - labels movements so that x86 conversion knows which are reachable, 
+    breaks let statements of anf expression into simplified x86 operations 
+    to lead to an easier conversion
+    
+    x86:
+        section .data
+            int_format db "%ld",10,0
+
+
+            global _main
+            extern _printf
+        section .text
+
+
+        _start:    call _main
+            mov rax, 60
+            xor rdi, rdi
+            syscall
+
+
+        _main:    push rbp
+            mov rbp, rsp
+            sub rsp, 64
+            mov esi, 3
+            mov [rbp-24], esi
+            mov esi, 4
+            mov [rbp-16], esi
+            mov esi, [rbp-24]
+            mov [rbp-8], esi
+            mov edi, [rbp-16]
+            mov eax, [rbp-8]
+            add eax, edi
+            mov [rbp-8], eax
+            mov esi, [rbp-8]
+            mov [rbp-32], esi
+            mov esi, [rbp-32]
+            lea rdi, [rel int_format]
+            mov eax, 0
+            call _printf
+            mov rax, 0
+            jmp finish_up
+        finish_up:    add rsp, 64
+            leave 
+            ret 
+    
+    - final machine code to be placed in an .asm file to be run, breaks up 
+        simplified ir-virtual operations into their more granular operations, 
+        allocates necessary stack space according to the number of registers needed 
+        (hence the addition of "mov rbp, rsp", "sub rsp, 48", and "add rsp, 48"
+        
+    OUTPUT: 
+        (base) isaaclehigh@Isaacs-Air ~ % /Users/isaaclehigh/Documents/Documents/CIS\ 352/CIS352Final/test-programs/q2_2 ; exit;
+        7
+
+        Saving session...
+        ...copying shared history...
+        ...saving history...truncating history files...
+        ...completed.
+
+        [Process completed]
+
+3.) 
+    q2_2.ifa: (let* ((x (+ 3 4)) (y (- x 2)) (z (+ x y))) (print z))
+    
+    - intended to print "12"
+
+    ifarith-tiny: '(let ((x (+ 3 4))) (let ((y (- x 2))) (let ((z (+ x y))) (print z))))
+    
+    - let* is re-encoded as a let to reduce number of forms, wraps statement in multiple 
+        single pair lets so that the behaviour of let* is retained
+    
+    anf: 
+        '(let ((x1254 3))
+           (let ((x1255 4))
+             (let ((x1256 (+ x1254 x1255)))
+               (let ((x x1256))
+                 (let ((x1257 2))
+                   (let ((x1258 (- x x1257)))
+                     (let ((y x1258))
+                       (let ((x1259 (+ x y))) (let ((z x1259)) (print z))))))))))
+   
+    - converts each member of expression into a let statement so that 
+        they are executed one step at a time
+        
+    ir-virtual: 
+        '(((label lab1260) (mov-lit x1254 3))
+          ((label lab1261) (mov-lit x1255 4))
+          ((label lab1262) (mov-reg x1256 x1254))
+          (add x1256 x1255)
+          ((label lab1263) (mov-reg x x1256))
+          ((label lab1264) (mov-lit x1257 2))
+          ((label lab1265) (mov-reg x1258 x))
+          (sub x1258 x1257)
+          ((label lab1266) (mov-reg y x1258))
+          ((label lab1267) (mov-reg x1259 x))
+          (add x1259 y)
+          ((label lab1268) (mov-reg z x1259))
+          ((label lab1269) (print z))
+          (return 0))
+    
+   - labels movements so that x86 conversion knows which are reachable, 
+    breaks let statements of anf expression into simplified x86 operations 
+    to lead to an easier conversion
+    
+    x86:
+        section .data
+            int_format db "%ld",10,0
+
+
+            global _main
+            extern _printf
+        section .text
+
+
+        _start:    call _main
+            mov rax, 60
+            xor rdi, rdi
+            syscall
+
+
+        _main:    push rbp
+            mov rbp, rsp
+            sub rsp, 144
+            mov esi, 3
+            mov [rbp-24], esi
+            mov esi, 4
+            mov [rbp-16], esi
+            mov esi, [rbp-24]
+            mov [rbp-8], esi
+            mov edi, [rbp-16]
+            mov eax, [rbp-8]
+            add eax, edi
+            mov [rbp-8], eax
+            mov esi, [rbp-8]
+            mov [rbp-32], esi
+            mov esi, 2
+            mov [rbp-72], esi
+            mov esi, [rbp-32]
+            mov [rbp-64], esi
+            mov edi, [rbp-72]
+            mov eax, [rbp-64]
+            sub eax, edi
+            mov [rbp-64], eax
+            mov esi, [rbp-64]
+            mov [rbp-40], esi
+            mov esi, [rbp-32]
+            mov [rbp-56], esi
+            mov edi, [rbp-40]
+            mov eax, [rbp-56]
+            add eax, edi
+            mov [rbp-56], eax
+            mov esi, [rbp-56]
+            mov [rbp-48], esi
+            mov esi, [rbp-48]
+            lea rdi, [rel int_format]
+            mov eax, 0
+            call _printf
+            mov rax, 0
+            jmp finish_up
+        finish_up:    add rsp, 144
+            leave 
+            ret 
+
+    
+    - final machine code to be placed in an .asm file to be run, breaks up 
+        simplified ir-virtual operations into their more granular operations, 
+        allocates necessary stack space according to the number of registers needed 
+        (hence the addition of "mov rbp, rsp", "sub rsp, 48", and "add rsp, 48"
+        
+    OUTPUT: 
+        (base) isaaclehigh@Isaacs-Air ~ % /Users/isaaclehigh/Documents/Documents/CIS\ 352/CIS352Final/test-programs/q2_3 ; exit;
+        12
+
+        Saving session...
+        ...copying shared history...
+        ...saving history...truncating history files...
+        ...completed.
+
+        [Process completed]
+        
+** End Answer 2 **
+
 [ Question 3 ] 
 
 Describe each of the passes of the compiler in a slight degree of
@@ -123,6 +417,10 @@ there could be more?
 
 In answering this question, you must use specific examples that you
 got from running the compiler and generating an output.
+
+** Answer 3 ** 
+
+The compiler 
 
 [ Question 4 ] 
 
