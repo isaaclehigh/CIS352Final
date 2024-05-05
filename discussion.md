@@ -497,9 +497,9 @@ Idioms:
     7.) Prefix notation: Racket uses prefix notation, so it is used for this whole 
         project as well as all the previous ones, however it was an important concept 
         to learn early on in the semester.
-    8.) The structure of the calculate symbol and its related function written is very 
-        unique in racket, I saw some of the of these structure have been used in the proper
-        way in our project.
+    8.) Hash tables provide constant-time average-case performance for insertion, deletion, 
+        and lookup operations, making them efficient for storing and retrieving symbols based 
+        on keys. We have seen it shown up both in class and projects, as well as in this project.
         
 ** End Answer 4 ** 
 
