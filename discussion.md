@@ -535,6 +535,18 @@ assignment, the given code was used so that the error persisted (the fixed code 
 commented out underneath the current match case). The file with this code is called 
 q5_1.ifa.
 
+It was also realized when testing the included .ifa files that if statements were not 
+functioning. The code found in q5_2.ifa is (if 1 (print 1) (print 2)) and it should 
+print 1 since any non-zero number is considered true in this code. However, when run, the 
+code outputs 2. This indicates that somewhere along the way the boolean value of the if 
+statement is not being calculated correctly. When looking at the x86 output, both paths 
+(print 1 and print 2) are present, and the value after the if is compared to 0 using 
+cmp. Therefore, the issue likely resides in the use fo jz and jmp to jump to the proper 
+branch.
+
+The error with if was found to persist even when using variables defined with let*, and 
+this is evidenced by the code in q5_3.ifa which contains the code: 
+(let* ([x 1] [y 2] [z 3]) (if x (print y) (print z))), and outputs 3 instead of 2.
 
 [ High Level Reflection ] 
 
