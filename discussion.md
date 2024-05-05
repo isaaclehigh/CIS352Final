@@ -138,8 +138,8 @@ For this question, please add your `.ifa` programs either (a) here or
           (add x1256 x1255)
           ((label lab1260) (print x1256))
           (return 0))
-    
-   - labels movements so that x86 conversion knows which are reachable,
+          
+    - labels movements so that x86 conversion knows which are reachable,
         breaks let statements of anf expression into simplified x86 operations 
         to lead to an easier conversion
     
@@ -223,8 +223,8 @@ For this question, please add your `.ifa` programs either (a) here or
           ((label lab1260) (mov-reg x x1256))
           ((label lab1261) (print x))
           (return 0))
-    
-   - labels movements so that x86 conversion knows which are reachable,
+          
+    - labels movements so that x86 conversion knows which are reachable,
         breaks let statements of anf expression into simplified x86 operations 
         to lead to an easier conversion
     
@@ -323,8 +323,8 @@ For this question, please add your `.ifa` programs either (a) here or
           ((label lab1268) (mov-reg z x1259))
           ((label lab1269) (print z))
           (return 0))
-    
-   - labels movements so that x86 conversion knows which are reachable,
+                    
+    - labels movements so that x86 conversion knows which are reachable,
         breaks let statements of anf expression into simplified x86 operations 
         to lead to an easier conversion
     
