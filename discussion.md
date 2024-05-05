@@ -420,7 +420,45 @@ got from running the compiler and generating an output.
 
 ** Answer 3 ** 
 
-The compiler 
+The compiler first converts from the ifarith language to a simplified 
+version called ifarith-tiny. This strips away the complexity of handling 
+and, or, and cond statements in favor of utilizing if. It also changes 
+let* bindings and multiple binding let*'s into let statements with one 
+binding that wrap around the whole expression. A conversion of a let* 
+looks like this: '(let* ((x 1)) (+ x 1)) -> '(let ((x 1)) (+ x 1))
+
+Next, the compiler converts the ifarith-tiny into administrative normal 
+form which breaks each operation and value in the code into a let statement, 
+ensuring that the process is executed one step at a time. Continuing with 
+the example detailed above, the ifarith-tiny->anf conversion looks like this: 
+'(let ((x 1)) (+ x 1)) -> '(let ((x122123 1)) (let ((x x122123)) 
+                    (let ((x122124 1)) (let ((x122125 (+ x x122124))) x122125))))
+
+Next, the anf code is converted into IR-Virtual which converts the code into 
+a form much closer to assembly, converting value to variable assignments like 
+'(let ((x122123 1))) into '(mov-lit x122123 1) and variable to variable assignments 
+like '(let ((x x122123))) into '(mov-reg x x122123). Each movement is also labeled for 
+traceability and jump functionality.
+
+Finally, IR-Virtual code is broken up further into the respective assembly 
+operations that make it up. Operations like '(mov-lit x122123 1) get translated 
+into "(mov "esi" "1") (mov "[rbp-32]" "esi")" which creates a spot in memory that 
+holds the value 1. To assign 1 to x, '(mov-reg x x122123) is changed to 
+"(mov "esi" "[rbp-32]") (mov "[rbp-8]" "esi")" which uses the temporary value 
+"esi" to copy the location in memory where 1 is stored over to a new location 
+representing x. Necessary stack space is also freed up at the start of the x86 
+code.
+
+The amount of passes seems to be the right amount generally. Each pass 
+changes the code in a meaningful way that contributes to its final form as x86. 
+However, with the way the compiler is written, some redundancy is introduced when assigning 
+variables. This process entails moving values into a temporary register, copying that register to 
+memory, copying that spot in memory to the temporary register, then copying the temporary 
+register to a spot in memory for the variable. Instead, if there was extra discernment built 
+into either the anf or the ir-virtual conversion, the value could be directly placed in memory to 
+represent the variable.
+
+** End Answer 3 ** 
 
 [ Question 4 ] 
 
@@ -431,6 +469,36 @@ project that we discussed in class this semester. There is no specific
 definition of what an idiom is: think carefully about whether you see
 any pattern in this code that resonates with you from earlier in the
 semester.
+
+** Answer 4 ** 
+
+Idioms: 
+    
+    1.) Custom programming language semantics: We used custom programming 
+        languages in Projects 3 and 4, and it is in this project too in the 
+        form of ifarith
+    2.) Match: Pattern matching lists was used extensively throughout the course
+        and it is a key component in this project as well.
+    3.) Helper functions: Throughout all of the projects in this class, helper 
+        functions have been crucial to building up larger functions. They are used 
+        extensively in this project, some examples are normalize-term, normalize, 
+        name->op, and linearize.
+    4.) Tail recursion: During this course, tail recursion was taught as a way to 
+        create recursive functions without adding to the stack. This project utilizes 
+        foldl which is a racket built-in that utilizes tail recursion.
+    5.) Compiling: Project 4 had us take a similar, but more extensive language than 
+        the ifarith in this project, and convert it into the church-encoded lambda 
+        calculus. This is similar to what needs to be done for this project, since 
+        the input programs are both in the form of a list, and are recursively 
+        traversed and translated into the desired form.
+    6.) Sets: This project uses sets to hold un-ordered groups of data, such as 
+        labels and registers used in ir-virtual. Sets were discussed in the class 
+        and were included in the final exam review as well.
+    7.) Prefix notation: Racket uses prefix notation, so it is used for this whole 
+        project as well as all the previous ones, however it was an important concept 
+        to learn early on in the semester.
+        
+** End Answer 4 ** 
 
 [ Question 5 ] 
 
@@ -449,6 +517,7 @@ ask me.
 
 Your team will receive a small bonus for being the first team to
 report a unique bug (unique determined by me).
+
 
 [ High Level Reflection ] 
 
