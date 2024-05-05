@@ -1,1 +1,1 @@
-(let* ([x (+ 3 4)] [y (- x 2)] [z (+ x y)]) (print z))
+(print (let* ([x 1]) x))

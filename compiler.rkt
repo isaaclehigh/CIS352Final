@@ -138,6 +138,8 @@
     ;; print an arbitrary expression (must be a number at runtime)
     [`(print ,_)
      e]
+;;    [`(print ,x)
+;;     `(print ,(ifarith->ifarith-tiny x))]
     ;; and/or, with short-circuiting semantics
     [`(and ,e0) (ifarith->ifarith-tiny e0)]
     [`(and ,e0 ,es ...) (ifarith->ifarith-tiny `(if ,e0 (and ,@es) 0))]

@@ -518,6 +518,21 @@ ask me.
 Your team will receive a small bonus for being the first team to
 report a unique bug (unique determined by me).
 
+** Answer 5 ** 
+
+To start testing, the code was analyzed thoroughly. Early on it was theorized that
+print might cause issues based on the given code for ifarith->ifarith-tiny. The 
+expression wasn't recursively converted and instead returned in ifarith form. Because 
+of this, a let* statement within the print should break the code, and this 
+assumption was correct. An input of '(print (let* ((x 1)) x)) results in the error, 
+match: no matching clause for '((x 1)), and the code cannot be compiled. This error 
+can be fixed by replacing the current print match case with     
+[`(print ,x) `(print ,(ifarith->ifarith-tiny x))], but considering the nature of this 
+assignment, the given code was used so that the error persisted (the fixed code is 
+commented out underneath the current match case). The file with this code is called 
+q5_1.ifa.
+
+It was also realized when 
 
 [ High Level Reflection ] 
 
