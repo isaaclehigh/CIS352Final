@@ -548,6 +548,8 @@ The error with if was found to persist even when using variables defined with le
 this is evidenced by the code in q5_3.ifa which contains the code: 
 (let* ([x 1] [y 2] [z 3]) (if x (print y) (print z))), and outputs 3 instead of 2.
 
+** End Answer 5 ** 
+
 [ High Level Reflection ] 
 
 In roughly 100-500 words, write a summary of your findings in working
@@ -558,4 +560,18 @@ nuts and bolts of code, try to use this experience as a way to think
 about how you would approach doing group code critique. What would you
 do differently next time, what did you learn?
 
-For our group, the process of understanding the structure of the code is one of the first difficulties. Cause having a systematic understanding of what the given code has already done is very important for the undo parts. Luckily while understanding the structure of the code step by step we learned a lot about how racket as a simple language functioned in the mechanism view. The process of how a user perspective code is translated into a machine language is a very fresh perspective for our group. Another challenge is linking. While using lambda language to do church encoding, is already quite challenging, when it comes to a much bigger compiler translating ifArith to x86, it is more difficult. During this step, we had a deeper understanding of lambda calculus. Of course other than the coding part, how to communicate with teammates is the other thing we learned. The experience of the compiler written brings us the idea of how a compiler should work. So next time when we have to write another compiler, we will have more confidence and much clearer idea of what should we do.
+For our group, the process of understanding the structure of the code was one of the first difficulties.
+We needed a systematic understanding of what the given code was doing at each step of its execution, 
+especially in the process of finding ways to break the code. While understanding the structure of the 
+code step by step, we learned a lot about how even small subsets of racket's scheme can be complex from the 
+perspective of assembly/x86. Seeing how a user's code is translated into a machine language was a new
+and intriguing experience for our group. Another challenge was linking our work together in the github 
+repository, since we had never used a collaborative repo before. This was a useful skill to learn since 
+future careers will likely utilize github or a similar program extensively. It was also interesting to 
+see another version of a compiler after making the church encoder for project 4.
+Even though church encoding is already quite challenging, when it comes to a much 
+bigger compiler translating ifArith to x86, it is more difficult to track a code snippet's path from 
+beginning to end. Other than coding, we all obtained additional experience in how to work with teammates. 
+Seeing the code for a rudimentary compiler and getting to mess around with assembly code was an incredibly 
+useful experience and next time we have to write/work on a compiler, we will have more confidence and a much 
+clearer idea of what we need to do.
