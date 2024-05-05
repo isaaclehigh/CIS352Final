@@ -139,9 +139,9 @@ For this question, please add your `.ifa` programs either (a) here or
           ((label lab1260) (print x1256))
           (return 0))
     
-   - labels movements so that x86 conversion knows which are reachable, 
-    breaks let statements of anf expression into simplified x86 operations 
-    to lead to an easier conversion
+   - labels movements so that x86 conversion knows which are reachable,
+        breaks let statements of anf expression into simplified x86 operations 
+        to lead to an easier conversion
     
     x86:
         section .data
@@ -224,9 +224,9 @@ For this question, please add your `.ifa` programs either (a) here or
           ((label lab1261) (print x))
           (return 0))
     
-   - labels movements so that x86 conversion knows which are reachable, 
-    breaks let statements of anf expression into simplified x86 operations 
-    to lead to an easier conversion
+   - labels movements so that x86 conversion knows which are reachable,
+        breaks let statements of anf expression into simplified x86 operations 
+        to lead to an easier conversion
     
     x86:
         section .data
@@ -324,9 +324,9 @@ For this question, please add your `.ifa` programs either (a) here or
           ((label lab1269) (print z))
           (return 0))
     
-   - labels movements so that x86 conversion knows which are reachable, 
-    breaks let statements of anf expression into simplified x86 operations 
-    to lead to an easier conversion
+   - labels movements so that x86 conversion knows which are reachable,
+        breaks let statements of anf expression into simplified x86 operations 
+        to lead to an easier conversion
     
     x86:
         section .data
