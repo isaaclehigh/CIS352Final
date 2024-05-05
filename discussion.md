@@ -497,6 +497,9 @@ Idioms:
     7.) Prefix notation: Racket uses prefix notation, so it is used for this whole 
         project as well as all the previous ones, however it was an important concept 
         to learn early on in the semester.
+    8.) The structure of the calculate symbol and its related function written is very 
+        unique in racket, I saw some of the of these structure have been used in the proper
+        way in our project.
         
 ** End Answer 4 ** 
 
@@ -530,4 +533,4 @@ about how you would approach doing group code critique. What would you
 do differently next time, what did you learn?
 
 
-This is mark.
+For our group, the process of understanding the structure of the code is one of the first difficulties. Cause having a systematic understanding of what the given code has already done is very important for the undo parts. Luckily while understanding the structure of the code step by step we learned a lot about how racket as a simple language functioned in the mechanism view. The process of how a user perspective code is translated into a machine language is a very fresh perspective for our group. Another challenge is linking. While using lambda language to do church encoding, is already quite challenging, when it comes to a much bigger compiler translating ifArith to x86, it is more difficult. During this step, we had a deeper understanding of lambda calculus. Of course other than the coding part, how to communicate with teammates is the other thing we learned. The experience of the compiler written brings us the idea of how a compiler should work. So next time when we have to write another compiler, we will have more confidence and much clearer idea of what should we do.
